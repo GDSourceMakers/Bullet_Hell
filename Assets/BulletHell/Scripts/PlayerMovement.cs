@@ -40,7 +40,7 @@ public class PlayerMovement : MonoBehaviour
 
 		//Debug.Log(Input.GetAxis("Horizontal-Mouse"));
 
-		Vector3 esPos = r2d2.position + newSpeed*Time.fixedDeltaTime;
+		Vector3 esPos = (Vector2)transform.localPosition + newSpeed*Time.fixedDeltaTime;
 
 		if (esPos.x <= boundary.xMin ||
 			esPos.x >= boundary.xMax)

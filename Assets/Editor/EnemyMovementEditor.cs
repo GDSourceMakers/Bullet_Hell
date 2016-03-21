@@ -31,14 +31,9 @@ public class EnemyMovementEditor : Editor
 	SerializedProperty height;
 	#endregion
 
-	#region Def
-	SerializedProperty boundToCam;
-	#endregion
+	SerializedProperty active;
 
 	AIType ai;
-
-	SerializedProperty camActivateDistance;
-	SerializedProperty camActivatePosition;
 
 	private Transform handleTransform;
 	private Quaternion handleRotation;
@@ -99,7 +94,6 @@ public class EnemyMovementEditor : Editor
 
 				EditorGUILayout.PropertyField(controlPointsList, true);
 
-				EditorGUILayout.PropertyField(sTargets);
 				EditorGUILayout.PropertyField(isLooping);
 
 				break;
@@ -113,10 +107,7 @@ public class EnemyMovementEditor : Editor
 
 		EditorGUILayout.PropertyField(sRot, new GUIContent("Turn Type", "Size of the tiles"));
 
-		EditorGUILayout.PropertyField(boundToCam);
-
-		EditorGUILayout.PropertyField(camActivateDistance);
-		EditorGUILayout.PropertyField(camActivatePosition);
+		EditorGUILayout.PropertyField(active);
 
 		serializedObject.ApplyModifiedProperties();
 	}
@@ -139,10 +130,7 @@ public class EnemyMovementEditor : Editor
 		width = serializedObject.FindProperty("width");
 		height = serializedObject.FindProperty("height");
 
-		boundToCam = serializedObject.FindProperty("boundToCam");
-
-		camActivateDistance = serializedObject.FindProperty("distance");
-		camActivatePosition = serializedObject.FindProperty("position");
+		active = serializedObject.FindProperty("active");
 	}
 
 	void OnSceneGUI()
@@ -153,6 +141,7 @@ public class EnemyMovementEditor : Editor
 		handleRotation = Tools.pivotRotation == PivotRotation.Local ?
 			handleTransform.rotation : Quaternion.identity;
 		#endregion
+
 
 		Gizmos.color = Color.white;
 
@@ -174,27 +163,16 @@ public class EnemyMovementEditor : Editor
 		{
 			case AIType.Linear:
 				#region Linear
-				Handles.ArrowCap(0, originalPos, rotation * Quaternion.Euler(90, 0, 0), 2);
-				if (EMtarget.boundToCam && EMtarget.active && EditorApplication.isPlaying)
-				{
-					/*
-					Vector3 campos = Camera.main.transform.position - EMtarget.GetComponent<ActivateByCamera>().distance;
-					campos.z = 0;
-					Handles.DrawLine(EOriginPos + campos,(EOriginPos + campos) + EOriginRot * new Vector3(0, -50, 0));
-					*/
 
-					EMtarget.line0 = ShowPoint(EMtarget.line0, 0);
-					EMtarget.line1 = ShowPoint(EMtarget.line1, 1);
-					Handles.DrawLine(EMtarget.line0, EMtarget.line1);
-				}
-				else
-				{
-					EMtarget.line0 = ShowPoint(EMtarget.line0 + originalPos, 0);
-					EMtarget.line1 = ShowPoint(EMtarget.line1 + originalPos, 1);
+				Handles.ArrowCap(0, position, rotation * Quaternion.Euler(90, 0, 0), 2);
 
-					Handles.DrawLine(EMtarget.line0 + originalPos, EMtarget.line1 + originalPos);
+				/*
+				EMtarget.line0 = ShowPoint(EMtarget.line0, 0);
+				EMtarget.line1 = ShowPoint(EMtarget.line1, 1);
 
-				}
+				Handles.DrawLine(EMtarget.line0 + originalPos, EMtarget.line1 + originalPos);
+				*/
+
 				#endregion
 				break;
 			case AIType.Sinus:
@@ -208,18 +186,11 @@ public class EnemyMovementEditor : Editor
 					Vector3 p0;
 					Vector3 p1;
 
-					if (EMtarget.boundToCam && EMtarget.active && EditorApplication.isPlaying)
-					{
-						Vector3 campos = Camera.main.transform.position - EMtarget.GetComponent<ActivateByCamera>().distance;
-						campos.z = 0;
-						p0 = campos + originalPos + angle * new Vector3(i, Mathf.Sin((i * Mathf.PI) / EMtarget.height) * EMtarget.width);
-						p1 = campos + originalPos + angle * new Vector3(i + p, Mathf.Sin(((i + p) * Mathf.PI) / EMtarget.height) * EMtarget.width);
-					}
-					else
-					{
-						p0 = originalPos + angle * new Vector3(i, Mathf.Sin((i * Mathf.PI) / EMtarget.height) * EMtarget.width);
-						p1 = originalPos + angle * new Vector3(i + p, Mathf.Sin(((i + p) * Mathf.PI) / EMtarget.height) * EMtarget.width);
-					}
+
+
+					p0 = originalPos + angle * new Vector3(i, Mathf.Sin((i * Mathf.PI) / EMtarget.height) * EMtarget.width);
+					p1 = originalPos + angle * new Vector3(i + p, Mathf.Sin(((i + p) * Mathf.PI) / EMtarget.height) * EMtarget.width);
+
 					Handles.DrawLine(p0, p1);
 				}
 
@@ -293,7 +264,7 @@ public class EnemyMovementEditor : Editor
 
 	private Vector3 ShowControllPoint(int index)
 	{
-		Vector3 point = EMtarget.controlPointsList[index] + generalOrigin;
+		Vector3 point = EMtarget.controlPointsList[index] + originalPos;
 		Handles.color = Color.white;
 		if (index <= 1)
 		{
@@ -312,10 +283,10 @@ public class EnemyMovementEditor : Editor
 			{
 				Undo.RecordObject(EMtarget, "Move Point");
 				EditorUtility.SetDirty(EMtarget);
-				EMtarget.controlPointsList[index] = point - generalOrigin;
+				EMtarget.controlPointsList[index] = point - originalPos;
 			}
 		}
-		return point - generalOrigin;
+		return point - originalPos;
 	}
 
 	private Vector3 ShowPoint(Vector3 a, int index)
@@ -339,5 +310,4 @@ public class EnemyMovementEditor : Editor
 		}
 		return point;
 	}
-
 }
