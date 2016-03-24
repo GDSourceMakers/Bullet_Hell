@@ -12,14 +12,14 @@ public class Weapon : MonoBehaviour
 
 	public GameObject bullet;
 	public float bulletSpeed;
-	public Color color;
-
-
-	public bool active;
 
 	public Animator anim;
 
-	public float remRate;
+	float remFireRate;
+	public float weaponCooldown;
+	float remWeaponRate;
+
+	public bool active;
 
 	void Update()
 	{
@@ -27,16 +27,24 @@ public class Weapon : MonoBehaviour
 		{
 			Shoot();
 		}
-		if (active && remRate >= 0f)
+		if (active && remFireRate >= 0f)
 		{
-			remRate -= Time.deltaTime;
+			remFireRate -= Time.deltaTime;
+		}
+		if (active && remWeaponRate >= 0f)
+		{
+			remWeaponRate -= Time.deltaTime;
+		}
+		else if (active && remWeaponRate < 0)
+		{
+			DeEquip();
 		}
 	}
 
 	public void Shoot()
 	{
-		if ((Input.GetButtonDown("Fire") && remRate < 0f && fireType == FireType.Single) ||
-			(Input.GetButton("Fire") && remRate < 0f && fireType == FireType.Cons))
+		if ((Input.GetButtonDown("Fire") && remFireRate < 0f && fireType == FireType.Single) ||
+			(Input.GetButton("Fire") && remFireRate < 0f && fireType == FireType.Cons))
 		{
 			for (int i = 0; i < firePos.Length; i++)
 			{
@@ -53,7 +61,7 @@ public class Weapon : MonoBehaviour
 				Rigidbody2D r2d2 = go.GetComponent<Rigidbody2D>();
 				r2d2.AddForce(go.transform.rotation * Vector2.up * bulletSpeed * 100, ForceMode2D.Force);
 
-				remRate = fireRate;
+				remFireRate = fireRate;
 			}
 		}
 	}
@@ -68,11 +76,32 @@ public class Weapon : MonoBehaviour
 		{
 			active = true;
 		}
+		remWeaponRate = weaponCooldown;
 	}
 
 	public void DeEquip()
 	{
+		if (anim != null)
+		{
+			anim.SetBool("Active", false);
+		}
+		
+		
+			active = false;
+		
+		remWeaponRate = 0;
+	}
 
+	public void ForceChange(bool state)
+	{
+		if (state)
+		{
+			Equip();
+		}
+		else
+		{
+			DeEquip();
+		}
 	}
 }
 

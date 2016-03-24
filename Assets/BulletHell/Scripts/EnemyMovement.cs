@@ -177,13 +177,14 @@ public class EnemyMovement : MonoBehaviour
 
 					break;
 				case RotType.Palyer:
-
-					Vector3 dir = player.transform.position - transform.position;
-					float angleB = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-					angleB += 90;
-					Quaternion q = Quaternion.AngleAxis(angleB, Vector3.forward);
-					transform.rotation = Quaternion.Slerp(transform.rotation, q, Time.deltaTime * speed);
-
+					if (player != null)
+					{
+						Vector3 dir = player.transform.position - transform.position;
+						float angleB = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+						angleB += 90;
+						Quaternion q = Quaternion.AngleAxis(angleB, Vector3.forward);
+						transform.rotation = Quaternion.Slerp(transform.rotation, q, Time.deltaTime * speed);
+					}
 					break;
 				case RotType.Up:
 					break;

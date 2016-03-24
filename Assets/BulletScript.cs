@@ -3,6 +3,6 @@ using System.Collections;
 
 public class BulletScript : MonoBehaviour {
 
-	public float damagge;
+	public float damage;
 
 }
