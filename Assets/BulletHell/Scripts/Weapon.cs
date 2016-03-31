@@ -18,17 +18,12 @@ public class Weapon : MonoBehaviour
 
 	float remFireRate;
 	public float weaponCooldown;
-<<<<<<< HEAD
 	public float remWeaponRate;
-=======
-	float remWeaponRate;
->>>>>>> origin/master
 
 	public bool active;
 
 	void Update()
 	{
-<<<<<<< HEAD
 		if (GameController.instance.state == GameState.Playing)
 		{
 			if (active)
@@ -47,23 +42,6 @@ public class Weapon : MonoBehaviour
 			{
 				DeEquip();
 			}
-=======
-		if (active)
-		{
-			Shoot();
-		}
-		if (active && remFireRate >= 0f)
-		{
-			remFireRate -= Time.deltaTime;
-		}
-		if (active && remWeaponRate >= 0f)
-		{
-			remWeaponRate -= Time.deltaTime;
-		}
-		else if (active && remWeaponRate < 0)
-		{
-			DeEquip();
->>>>>>> origin/master
 		}
 	}
 
@@ -87,14 +65,11 @@ public class Weapon : MonoBehaviour
 				Rigidbody2D r2d2 = go.GetComponent<Rigidbody2D>();
 				r2d2.AddForce(go.transform.rotation * Vector2.up * bulletSpeed * 100, ForceMode2D.Force);
 
-<<<<<<< HEAD
 				foreach (ParticleSystem item in particles)
 				{
 					item.Play();
 				}
 
-=======
->>>>>>> origin/master
 				remFireRate = fireRate;
 			}
 		}
