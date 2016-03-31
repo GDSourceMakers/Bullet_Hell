@@ -209,6 +209,15 @@ public class EnemyMovementEditor : Editor
 						continue;
 					}
 
+					if (EMtarget.isLooping)
+					{
+						Handles.DrawLine(EMtarget.transform.position, EMtarget.controlPointsList[0]);
+					}
+					else
+					{
+						Handles.DrawLine(EMtarget.transform.position, EMtarget.controlPointsList[1]);
+					}
+
 					DisplayCatmullRomSpline(i);
 				}
 				#endregion
@@ -232,18 +241,22 @@ public class EnemyMovementEditor : Editor
 
 		int size = EMtarget.controlPointsList.Count;
 
+		if (pos == 0)
+		{
+			Handles.color = Color.green;
+		}
 
 		p0 = EMtarget.controlPointsList[CatmullRom.ClampListPos(pos - 1, EMtarget.controlPointsList.Count)];
-		p0 += originalPos;
+		//p0 += originalPos;
 
 		p1 = EMtarget.controlPointsList[pos];
-		p1 += originalPos;
+		//p1 += originalPos;
 
 		p2 = EMtarget.controlPointsList[CatmullRom.ClampListPos(pos + 1, EMtarget.controlPointsList.Count)];
-		p2 += originalPos;
+		//p2 += originalPos;
 
 		p3 = EMtarget.controlPointsList[CatmullRom.ClampListPos(pos + 2, EMtarget.controlPointsList.Count)];
-		p3 += originalPos;
+		//p3 += originalPos;
 
 		Vector3 lastPos = Vector3.zero;
 
@@ -259,14 +272,15 @@ public class EnemyMovementEditor : Editor
 			Handles.DrawLine(lastPos, newPos);
 			lastPos = newPos;
 		}
+		
 		Handles.DrawLine(lastPos, p2);
 	}
 
 	private Vector3 ShowControllPoint(int index)
 	{
-		Vector3 point = EMtarget.controlPointsList[index] + originalPos;
+		Vector3 point = EMtarget.controlPointsList[index];
 		Handles.color = Color.white;
-		if (index <= 1)
+		if (index == 0)
 		{
 			Handles.color = Color.green;
 		}
@@ -283,10 +297,11 @@ public class EnemyMovementEditor : Editor
 			{
 				Undo.RecordObject(EMtarget, "Move Point");
 				EditorUtility.SetDirty(EMtarget);
-				EMtarget.controlPointsList[index] = point - originalPos;
+				EMtarget.controlPointsList[index] = point;
 			}
 		}
-		return point - originalPos;
+		Handles.color = Color.white;
+		return point;
 	}
 
 	private Vector3 ShowPoint(Vector3 a, int index)

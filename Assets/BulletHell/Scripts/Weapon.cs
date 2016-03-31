@@ -3,7 +3,7 @@ using System.Collections;
 
 public class Weapon : MonoBehaviour
 {
-	public string name;
+	public new string name;
 
 	public FireType fireType;
 	public float fireRate;
@@ -14,15 +14,40 @@ public class Weapon : MonoBehaviour
 	public float bulletSpeed;
 
 	public Animator anim;
+	public ParticleSystem[] particles; 
 
 	float remFireRate;
 	public float weaponCooldown;
+<<<<<<< HEAD
+	public float remWeaponRate;
+=======
 	float remWeaponRate;
+>>>>>>> origin/master
 
 	public bool active;
 
 	void Update()
 	{
+<<<<<<< HEAD
+		if (GameController.instance.state == GameState.Playing)
+		{
+			if (active)
+			{
+				Shoot();
+			}
+			if (active && remFireRate >= 0f)
+			{
+				remFireRate -= Time.deltaTime;
+			}
+			if (active && remWeaponRate >= 0f)
+			{
+				remWeaponRate -= Time.deltaTime;
+			}
+			else if (active && remWeaponRate < 0)
+			{
+				DeEquip();
+			}
+=======
 		if (active)
 		{
 			Shoot();
@@ -38,6 +63,7 @@ public class Weapon : MonoBehaviour
 		else if (active && remWeaponRate < 0)
 		{
 			DeEquip();
+>>>>>>> origin/master
 		}
 	}
 
@@ -61,6 +87,14 @@ public class Weapon : MonoBehaviour
 				Rigidbody2D r2d2 = go.GetComponent<Rigidbody2D>();
 				r2d2.AddForce(go.transform.rotation * Vector2.up * bulletSpeed * 100, ForceMode2D.Force);
 
+<<<<<<< HEAD
+				foreach (ParticleSystem item in particles)
+				{
+					item.Play();
+				}
+
+=======
+>>>>>>> origin/master
 				remFireRate = fireRate;
 			}
 		}
